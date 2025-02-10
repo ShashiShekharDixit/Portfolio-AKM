@@ -31,85 +31,80 @@ document.addEventListener('DOMContentLoaded', function() {
         cursorDot.style.top = e.clientY + 'px';
     });
 });
+
 document.addEventListener("DOMContentLoaded", () => {
     const experienceList = document.querySelector("#experience .list");
-    let scrollDirection = 1; // 1 for right, -1 for left
-
+    let scrollDirection = 1;
     function autoScroll() {
         if (experienceList.scrollLeft + experienceList.offsetWidth >= experienceList.scrollWidth) {
-            scrollDirection = -1; // Change direction to left
+            scrollDirection = -1;
         } else if (experienceList.scrollLeft <= 0) {
-            scrollDirection = 1; // Change direction to right
+            scrollDirection = 1;
         }
-        experienceList.scrollLeft += scrollDirection; // Scroll in the current direction
+        experienceList.scrollLeft += scrollDirection;
     }
-
-    setInterval(autoScroll, 30); // Adjust the interval for speed
+    setInterval(autoScroll, 30);
 });
+
 document.addEventListener("DOMContentLoaded", () => {
     const projectList = document.querySelector("#project .list");
-    let scrollDirection = 1; // 1 for right, -1 for left
-
+    let scrollDirection = 1;
     function autoScrollProjects() {
         if (projectList.scrollLeft + projectList.offsetWidth >= projectList.scrollWidth) {
-            scrollDirection = -1; // Reverse direction to left
+            scrollDirection = -1;
         } else if (projectList.scrollLeft <= 0) {
-            scrollDirection = 1; // Reverse direction to right
+            scrollDirection = 1;
         }
-        projectList.scrollLeft += scrollDirection; // Scroll in the current direction
+        projectList.scrollLeft += scrollDirection;
     }
-
-    setInterval(autoScrollProjects, 30); // Adjust interval for scroll speed
+    setInterval(autoScrollProjects, 30);
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Tab switching functionality
     const tabs = document.querySelectorAll('.tab');
     const navLinks = document.querySelectorAll('nav a');
-
     navLinks.forEach(link => {
         link.addEventListener('click', function() {
-            // Remove active class from all tabs
             tabs.forEach(tab => tab.classList.remove('active'));
-
-            // Add active class to the clicked tab
             const targetTab = document.getElementById(link.getAttribute('data-tab'));
             targetTab.classList.add('active');
         });
     });
-
-    // Custom Cursor Effect only for content name
     const cursor = document.querySelector('.cursor');
     const cursorDot = document.querySelector('.cursor-dot');
     const contentNames = document.querySelectorAll('.name');
-
-    // Mousemove event for tracking cursor position
     document.addEventListener('mousemove', (e) => {
         const mouseX = e.clientX;
         const mouseY = e.clientY;
-
         cursor.style.left = `${mouseX}px`;
         cursor.style.top = `${mouseY}px`;
         cursorDot.style.left = `${mouseX}px`;
         cursorDot.style.top = `${mouseY}px`;
     });
-
-    // Add hover effect to content names to enlarge cursor and show dot
     contentNames.forEach(content => {
         content.addEventListener('mouseenter', () => {
-            cursorDot.style.visibility = 'visible';  // Show smaller dot
-            cursor.style.transform = 'scale(5.5)';  // Enlarge cursor
-
-            // Change text content when hover
+            cursorDot.style.visibility = 'visible'; 
+            cursor.style.transform = 'scale(5.5)';  
             content.textContent = content.getAttribute('data-hover');
         });
-
         content.addEventListener('mouseleave', () => {
-            cursorDot.style.visibility = 'hidden';  // Hide smaller dot
-            cursor.style.transform = 'scale(1)';    // Reset cursor size
-
-            // Restore original text when hover ends
+            cursorDot.style.visibility = 'hidden';  
+            cursor.style.transform = 'scale(1)';    
             content.textContent = content.getAttribute('data-original');
         });
     });
+    const emailForm = document.querySelector('#email-form');
+    if (emailForm) {
+        emailForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.querySelector('#email').value;
+            const message = document.querySelector('#message').value;
+            const number = document.querySelector('#number').value;
+            if (!email || !message || !number) {
+                alert('Please fill out all fields correctly.');
+                return;
+            }
+            alert(`Email: ${email}\nMessage: ${message}\nNumber: ${number}`);
+        });
+    }
 });
