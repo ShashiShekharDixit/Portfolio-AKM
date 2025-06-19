@@ -1,102 +1,90 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const tabLinks = document.querySelectorAll('nav a[data-tab]');
     const tabContents = document.querySelectorAll('.tab');
+
     function showTab(tabId) {
-        tabContents.forEach(tab => tab.style.display = 'none');        
+        tabContents.forEach(tab => tab.style.display = 'none');
         document.getElementById(tabId).style.display = 'block';
         tabLinks.forEach(link => link.classList.remove('active'));
         document.querySelector(`nav a[data-tab="${tabId}"]`).classList.add('active');
     }
+
     tabLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             e.preventDefault();
-            const tabId = this.getAttribute('data-tab');
-            showTab(tabId);
+            showTab(this.getAttribute('data-tab'));
         });
     });
-    showTab('intro');
+
     document.querySelectorAll('.tab a[data-tab]').forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             e.preventDefault();
-            const tabId = this.getAttribute('data-tab');
-            showTab(tabId);
+            showTab(this.getAttribute('data-tab'));
         });
     });
-    const cursor = document.querySelector('.cursor');
-    const cursorDot = document.querySelector('.cursor-dot');
-    document.addEventListener('mousemove', e => {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-        cursorDot.style.left = e.clientX + 'px';
-        cursorDot.style.top = e.clientY + 'px';
-    });
-});
 
-document.addEventListener("DOMContentLoaded", () => {
+    showTab('intro');
+
+    function autoScroll(element, interval = 30) {
+        let direction = 1;
+        setInterval(() => {
+            if (element.scrollLeft + element.clientWidth >= element.scrollWidth) {
+                direction = -1;
+            } else if (element.scrollLeft <= 0) {
+                direction = 1;
+            }
+            element.scrollLeft += direction;
+        }, interval);
+    }
+
     const experienceList = document.querySelector("#experience .list");
-    let scrollDirection = 1;
-    function autoScroll() {
-        if (experienceList.scrollLeft + experienceList.offsetWidth >= experienceList.scrollWidth) {
-            scrollDirection = -1;
-        } else if (experienceList.scrollLeft <= 0) {
-            scrollDirection = 1;
-        }
-        experienceList.scrollLeft += scrollDirection;
-    }
-    setInterval(autoScroll, 30);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
     const projectList = document.querySelector("#project .list");
-    let scrollDirection = 1;
-    function autoScrollProjects() {
-        if (projectList.scrollLeft + projectList.offsetWidth >= projectList.scrollWidth) {
-            scrollDirection = -1;
-        } else if (projectList.scrollLeft <= 0) {
-            scrollDirection = 1;
-        }
-        projectList.scrollLeft += scrollDirection;
-    }
-    setInterval(autoScrollProjects, 30);
-});
+    if (experienceList) autoScroll(experienceList);
+    if (projectList) autoScroll(projectList);
 
-document.addEventListener('DOMContentLoaded', function() {
-    const tabs = document.querySelectorAll('.tab');
-    const navLinks = document.querySelectorAll('nav a');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            tabs.forEach(tab => tab.classList.remove('active'));
-            const targetTab = document.getElementById(link.getAttribute('data-tab'));
-            targetTab.classList.add('active');
-        });
-    });
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const cursor = document.querySelector('.cursor');
     const cursorDot = document.querySelector('.cursor-dot');
-    const contentNames = document.querySelectorAll('.name');
-    document.addEventListener('mousemove', (e) => {
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
-        cursor.style.left = `${mouseX}px`;
-        cursor.style.top = `${mouseY}px`;
-        cursorDot.style.left = `${mouseX}px`;
-        cursorDot.style.top = `${mouseY}px`;
-    });
-    contentNames.forEach(content => {
-        content.addEventListener('mouseenter', () => {
-            cursorDot.style.visibility = 'visible'; 
-            cursor.style.transform = 'scale(5.5)';  
-            content.textContent = content.getAttribute('data-hover');
+
+    if (!isTouch && cursor && cursorDot) {
+        let x = 0, y = 0;
+        document.addEventListener('mousemove', e => {
+            x = e.clientX;
+            y = e.clientY;
         });
-        content.addEventListener('mouseleave', () => {
-            cursorDot.style.visibility = 'hidden';  
-            cursor.style.transform = 'scale(1)';    
-            content.textContent = content.getAttribute('data-original');
+        function animateCursor() {
+            cursor.style.left = `${x}px`;
+            cursor.style.top = `${y}px`;
+            cursorDot.style.left = `${x}px`;
+            cursorDot.style.top = `${y}px`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+    } else {
+        if (cursor) cursor.style.display = 'none';
+        if (cursorDot) cursorDot.style.display = 'none';
+    }
+
+    if (!isTouch) {
+        const contentNames = document.querySelectorAll('.name');
+        contentNames.forEach(content => {
+            content.addEventListener('mouseenter', () => {
+                cursorDot.style.visibility = 'visible';
+                cursor.style.transform = 'scale(5.5)';
+                content.textContent = content.getAttribute('data-hover');
+            });
+            content.addEventListener('mouseleave', () => {
+                cursorDot.style.visibility = 'hidden';
+                cursor.style.transform = 'scale(1)';
+                content.textContent = content.getAttribute('data-original');
+            });
         });
-    });
+    }
+
     const emailForm = document.querySelector('#email-form');
     if (emailForm) {
-        emailForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+        emailForm.addEventListener('submit', function (e) {
+            e.preventDefault();
             const email = document.querySelector('#email').value;
             const message = document.querySelector('#message').value;
             const number = document.querySelector('#number').value;
@@ -107,4 +95,12 @@ document.addEventListener('DOMContentLoaded', function() {
             alert(`Email: ${email}\nMessage: ${message}\nNumber: ${number}`);
         });
     }
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth < 768) {
+            document.body.classList.add('mobile');
+        } else {
+            document.body.classList.remove('mobile');
+        }
+    });
 });
